@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HR Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="/scripts/hr_dashboard.js" defer></script>
+</head>
+<body>
+    <div class="header">
+        <h1>HR Dashboard</h1>
+        <p id="welcomeMessage">Welcome to HR Portal!</p>
+    </div>
+    
+    <div class="nav">
+        <button onclick="loadStudents()">View All Students</button>
+        <button onclick="loadStatistics()">Statistics</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    
+    <div id="content" class="content">
+        <h2>HR Management Portal</h2>
+        <p>Use the navigation buttons above to:</p>
+        <ul>
+            <li>View and manage all registered students</li>
+            <li>View system statistics</li>
+            <li>Monitor user registrations</li>
+        </ul>
+    </div>
+</body>
+</html>

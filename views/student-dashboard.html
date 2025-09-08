@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="/scripts/student_dashboard.js" defer></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Student Dashboard</h1>
+        <p id="welcomeMessage">Welcome back!</p>
+    </div>
+    
+    <div class="nav">
+        <button onclick="loadProfile()">My Profile</button>
+        <button onclick="loadCourses()">My Courses</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    
+    <div id="content" class="content">
+        <h2>Welcome to your Student Portal!</h2>
+        <p>Use the navigation buttons above to:</p>
+        <ul>
+            <li>View your profile information</li>
+            <li>Check your enrolled courses</li>
+            <li>View your academic progress</li>
+        </ul>
+    </div>
+</body>
+</html>
