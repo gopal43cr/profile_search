@@ -129,3 +129,18 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
         showMessage('Network error. Please try again.', true);
     }
 });
+
+function toggleCompanyField() {
+const role = document.getElementById('signupRole').value;
+const companyField = document.getElementById('companyField');
+const companyInput = document.getElementById('signupCompany');
+
+if (role === 'hr') {
+    companyField.style.display = 'block';
+    companyInput.required = true;
+} else {
+    companyField.style.display = 'none';
+    companyInput.required = false;
+    companyInput.value = '';
+}
+}
