@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { requireRole } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 const Student = require('../models/Student');
 
 const router = express.Router();
@@ -120,6 +121,7 @@ router.get('/education', requireRole('student'), async (req, res) => {
 router.put('/education', requireRole('student'), async (req, res) => {
     try {
         const studentId = req.session.user.id;
+        console.log("studentId:", studentId);
         const { degree, fieldOfStudy, university, graduationYear, gpa } = req.body;
 
         const student = await Student.findByIdAndUpdate(
@@ -249,5 +251,56 @@ router.put('/skills', requireRole('student'), async (req, res) => {
         });
     }
 });
+
+router.post('/upload_resume/:id', upload.single('resume'), async (req, res) => {
+    try {
+        const student = await Student.findById(req.session.user.id);
+        if (!student) return res.status(404).json({ message: 'Student not found' });
+
+        student.resume = {
+            fileName: req.file.originalname,
+            fileType: req.file.mimetype,
+            fileData: req.file.buffer, // <-- PDF stored here
+            uploadDate: new Date()
+        };
+
+        await student.save();
+        res.json({ message: 'Resume uploaded successfully', student });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/resume/:id', async (req, res) => {
+    try {
+        if(req.session.user.role=='hr'){
+            const student = await Student.findById(req.params.id);
+            if (!student || !student.resume?.fileData) {
+                return res.status(404).json({ message: 'Resume not found' });
+            }
+            res.set({
+                'Content-Type': student.resume.fileType,
+                'Content-Disposition': `inline; filename="${student.resume.fileName}"`
+            });
+            res.send(student.resume.fileData);
+        }
+        else{
+            const student = await Student.findById(req.session.user.id);
+            if (!student || !student.resume?.fileData) {
+                return res.status(404).json({ message: 'Resume not found' });
+            }
+
+            res.set({
+                'Content-Type': student.resume.fileType,
+                'Content-Disposition': `inline; filename="${student.resume.fileName}"`
+            });
+            res.send(student.resume.fileData);
+        }
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 module.exports = router;

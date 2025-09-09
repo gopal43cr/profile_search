@@ -246,6 +246,11 @@ function createStudentCard(student) {
                     ${skills}
                 </div>
             </div>
+
+            <div class="info-section">
+                <h3>Resume</h3>
+                <button type="button" class="btn" onclick="viewResume('${student._id}')">View</button>
+            </div>
             
             ${student.professionalLinks && (student.professionalLinks.linkedin || student.professionalLinks.github || student.professionalLinks.portfolio) ? `
             <div class="info-section">
@@ -468,5 +473,16 @@ async function logout() {
     } catch (error) {
         console.error('Logout error:', error);
         window.location.href = '/auth/login';
+    }
+}
+
+async function viewResume(studentId) {
+    const response = await fetch(`/student/resume/${studentId}`);
+    if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+    } else {
+        alert('Error fetching resume.');
     }
 }

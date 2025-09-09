@@ -161,7 +161,7 @@ function showProfessionalLinks() {
 
 function showResume() {
     hideAllSections();
-    document.getElementById('resumeSection').classList.remove('hidden');
+    document.getElementById('resumeSection').classList.remove('hidden'); 
 }
 
 function updateSkillsDisplay() {
@@ -408,10 +408,54 @@ async function updateProfessionalLinks() {
     }
 }
 
-function uploadResume() {
-    alert('Resume upload functionality will be implemented with file storage service (like AWS S3, Google Cloud Storage, etc.)');
-    // This would require additional backend setup for file handling
+
+async function uploadResume() {
+    const resumeInput = document.getElementById('resumeFile');
+    if (resumeInput.files.length === 0) {
+        alert('Please select a file to upload.');
+        return;
+    }
+    const file = resumeInput.files[0];
+    
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    fetch(`/student/upload_resume/${studentProfile._id}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Resume uploaded successfully!');
+            studentProfile.resume = data.student.resume;
+            populateProfileForm();
+            updateCompletionStatus();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error uploading resume:', error);
+        alert('Network error. Please try again.');
+    });
 }
+
+async function viewResume() {
+    if (!studentProfile.resume || !studentProfile.resume.fileData) {
+        alert('No resume uploaded.');
+        return;
+    }
+    const response = await fetch(`/student/resume/${studentProfile._id}`);
+    if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+    } else {
+        alert('Error fetching resume.');
+    }
+}
+
 
 async function logout() {
     try {

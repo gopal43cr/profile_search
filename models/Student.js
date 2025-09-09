@@ -106,8 +106,9 @@ const studentSchema = new mongoose.Schema({
     
     resume: {
         fileName: { type: String },
-        filePath: { type: String },
-        uploadDate: { type: Date }
+        fileType: { type: String },
+        fileData: { type: Buffer },
+        uploadedAt: { type: Date }
     },
     
     availability: {
