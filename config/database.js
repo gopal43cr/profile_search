@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
+require('dotenv').config({ path: './config/.env' });
 
 const connectDB = async () => {
     try {
         // CHANGE THIS TO YOUR ACTUAL MONGODB ATLAS CONNECTION STRING
-        const conn = await mongoose.connect('mongodb+srv://das743383_db_user:LOggRc8nC51SybM0@cluster0.dsxak6t.mongodb.net/profile_search?retryWrites=true&w=majority&appName=Cluster0');
+        const conn = await mongoose.connect(process.env.DATABSE_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
         
         console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
