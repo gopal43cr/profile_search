@@ -14,7 +14,7 @@ body {
 
 /* Header Styles */
 .header {
-    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
     color: white;
     padding: 20px 40px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -64,7 +64,7 @@ body {
     padding: 12px 24px;
     border: 2px solid transparent;
     border-radius: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
     color: white;
     font-weight: 600;
     font-size: 14px;
@@ -87,7 +87,7 @@ body {
 
 .nav button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
 }
 
 .nav button:hover::before {
@@ -95,8 +95,8 @@ body {
 }
 
 .nav button.active {
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .logout-btn {
