@@ -48,7 +48,7 @@ const studentSchema = new mongoose.Schema({
         gpa: { 
             type: Number,
             min: [0, 'GPA cannot be negative'],
-            max: [4.0, 'GPA cannot exceed 4.0']
+            max: [10.0, 'GPA cannot exceed 10.0']
         }
     },
     

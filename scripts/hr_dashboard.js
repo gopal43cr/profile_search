@@ -229,7 +229,7 @@ function createStudentCard(student) {
             <div class="info-section">
                 <h4>Education</h4>
                 <p>${educationText}</p>
-                <p><strong>GPA:</strong> ${gpa}/4.0</p>
+                <p><strong>GPA:</strong> ${gpa}/10.0</p>
                 <p><strong>Graduation Year:</strong> ${graduationYear}</p>
             </div>
             
