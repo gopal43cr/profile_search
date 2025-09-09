@@ -6,6 +6,7 @@ function toggleForms() {
     const title = document.getElementById('formTitle');
     const toggleBtn = document.getElementById('toggleBtn');
     const messageDiv = document.getElementById('message');
+    const companyField = document.getElementById('companyField');
     
     if (isLoginMode) {
         // Switch to signup mode
@@ -21,10 +22,30 @@ function toggleForms() {
         title.textContent = 'Login';
         toggleBtn.textContent = "Don't have an account? Sign Up";
         isLoginMode = true;
+        
+        // Hide company field when switching to login
+        companyField.style.display = 'none';
+        document.getElementById('signupRole').value = '';
+        document.getElementById('signupCompany').required = false;
     }
     
     // Clear message when switching
     messageDiv.classList.add('hidden');
+}
+
+function toggleCompanyField() {
+    const role = document.getElementById('signupRole').value;
+    const companyField = document.getElementById('companyField');
+    const companyInput = document.getElementById('signupCompany');
+    
+    if (role === 'hr') {
+        companyField.style.display = 'block';
+        companyInput.required = true;
+    } else {
+        companyField.style.display = 'none';
+        companyInput.required = false;
+        companyInput.value = '';
+    }
 }
 
 function showMessage(message, isError = false) {
@@ -72,6 +93,18 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
     const role = document.getElementById('signupRole').value;
+    const companyName = document.getElementById('signupCompany').value;
+    
+    // Validate HR role has company name
+    if (role === 'hr' && !companyName.trim()) {
+        showMessage('Company name is required for HR role', true);
+        return;
+    }
+    
+    const requestBody = { name, email, password, role };
+    if (role === 'hr') {
+        requestBody.companyName = companyName;
+    }
     
     try {
         const response = await fetch('/auth/signup', {
@@ -79,7 +112,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, email, password, role })
+            body: JSON.stringify(requestBody)
         });
         
         const data = await response.json();

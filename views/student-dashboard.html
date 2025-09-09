@@ -4,6 +4,130 @@
     <title>Student Dashboard</title>
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="/scripts/student_dashboard.js" defer></script>
+    <style>
+        .profile-section {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .skills-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        
+        .skill-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .skill-tag .remove-skill {
+            cursor: pointer;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        
+        .completion-status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .completion-complete {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .completion-incomplete {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .readonly {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -12,19 +136,215 @@
     </div>
     
     <div class="nav">
-        <button onclick="loadProfile()">My Profile</button>
-        <button onclick="loadCourses()">My Courses</button>
+        <button onclick="showProfile()">Profile Overview</button>
+        <button onclick="showEducation()">Education</button>
+        <button onclick="showSkills()">Skills</button>
+        <button onclick="showExperience()">Experience</button>
+        <button onclick="showProfessionalLinks()">Professional Links</button>
+        <button onclick="showResume()">Resume</button>
         <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
     
     <div id="content" class="content">
-        <h2>Welcome to your Student Portal!</h2>
-        <p>Use the navigation buttons above to:</p>
-        <ul>
-            <li>View your profile information</li>
-            <li>Check your enrolled courses</li>
-            <li>View your academic progress</li>
-        </ul>
+        <!-- Profile Completion Status -->
+        <div id="completionStatus" class="completion-status">
+            <span id="completionText">Loading profile completion status...</span>
+        </div>
+        
+        <!-- Welcome Section -->
+        <div id="welcomeSection">
+            <h2>Welcome to your Student Portal!</h2>
+            <p>Complete your profile to increase your visibility to HR recruiters:</p>
+            <ul>
+                <li>Add your education details and GPA</li>
+                <li>List your technical skills</li>
+                <li>Add your work experience</li>
+                <li>Include professional links (LinkedIn, GitHub, Portfolio)</li>
+                <li>Upload your resume</li>
+                <li>Set your availability status</li>
+            </ul>
+        </div>
+
+        <!-- Profile Overview Section -->
+        <div id="profileSection" class="hidden">
+            <h2>Profile Overview</h2>
+            <form id="profileForm">
+                <div class="profile-grid">
+                    <div class="profile-section">
+                        <h3>Basic Information</h3>
+                        <div class="form-group">
+                            <label>Full Name:</label>
+                            <input type="text" id="profileName" readonly class="readonly">
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="profileEmail" readonly class="readonly">
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3>Location</h3>
+                        <div class="form-group">
+                            <label>City:</label>
+                            <input type="text" id="locationCity" placeholder="e.g., Mumbai">
+                        </div>
+                        <div class="form-group">
+                            <label>State:</label>
+                            <input type="text" id="locationState" placeholder="e.g., Maharashtra">
+                        </div>
+                        <div class="form-group">
+                            <label>Country:</label>
+                            <input type="text" id="locationCountry" placeholder="e.g., India">
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3>Availability</h3>
+                        <div class="form-group">
+                            <label>Availability Status:</label>
+                            <select id="availability">
+                                <option value="immediate">Available Immediately</option>
+                                <option value="2-weeks">Available in 2 weeks</option>
+                                <option value="1-month">Available in 1 month</option>
+                                <option value="2-months">Available in 2 months</option>
+                                <option value="not-available">Not Available</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">Update Profile</button>
+            </form>
+        </div>
+
+        <!-- Education Section -->
+        <div id="educationSection" class="hidden">
+            <h2>Education Details</h2>
+            <form id="educationForm">
+                <div class="profile-section">
+                    <div class="profile-grid">
+                        <div class="form-group">
+                            <label>Degree:</label>
+                            <select id="eduDegree">
+                                <option value="">Select Degree</option>
+                                <option value="Bachelor's">Bachelor's</option>
+                                <option value="Master's">Master's</option>
+                                <option value="PhD">PhD</option>
+                                <option value="Associate">Associate</option>
+                                <option value="Diploma">Diploma</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Field of Study:</label>
+                            <input type="text" id="eduFieldOfStudy" placeholder="e.g., Computer Science">
+                        </div>
+                        <div class="form-group">
+                            <label>University:</label>
+                            <input type="text" id="eduUniversity" placeholder="e.g., University of Mumbai">
+                        </div>
+                        <div class="form-group">
+                            <label>Graduation Year:</label>
+                            <input type="number" id="eduGraduationYear" min="1950" max="2035" placeholder="2024">
+                        </div>
+                        <div class="form-group">
+                            <label>GPA (out of 4.0):</label>
+                            <input type="number" id="eduGPA" min="0" max="4" step="0.01" placeholder="3.5">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">Update Education</button>
+            </form>
+        </div>
+
+        <!-- Skills Section -->
+        <div id="skillsSection" class="hidden">
+            <h2>Technical Skills</h2>
+            <div class="profile-section">
+                <div class="form-group">
+                    <label>Add Skill:</label>
+                    <input type="text" id="newSkillInput" placeholder="e.g., JavaScript, Python, React">
+                    <button type="button" class="btn" onclick="addSkill()">Add Skill</button>
+                </div>
+                <div class="form-group">
+                    <label>Your Skills:</label>
+                    <div id="skillsList" class="skills-input">
+                        <!-- Skills will be dynamically added here -->
+                    </div>
+                </div>
+                
+                <button type="button" class="btn" onclick="updateSkills()">Save Skills</button>
+            </div>
+        </div>
+
+        <!-- Experience Section -->
+        <div id="experienceSection" class="hidden">
+            <h2>Work Experience</h2>
+            <form id="experienceForm">
+                <div class="profile-section">
+                    <div class="profile-grid">
+                        <div class="form-group">
+                            <label>Years of Experience:</label>
+                            <input type="number" id="expYears" min="0" max="50" placeholder="2">
+                        </div>
+                        <div class="form-group">
+                            <label>Current/Latest Job Title:</label>
+                            <input type="text" id="expJobTitle" placeholder="e.g., Software Developer">
+                        </div>
+                        <div class="form-group">
+                            <label>Company:</label>
+                            <input type="text" id="expCompany" placeholder="e.g., Tech Solutions Inc.">
+                        </div>
+                        <div class="form-group">
+                            <label>Job Description:</label>
+                            <textarea id="expDescription" placeholder="Describe your role and achievements..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">Update Experience</button>
+            </form>
+        </div>
+
+        <!-- Professional Links Section -->
+        <div id="professionalLinksSection" class="hidden">
+            <h2>Professional Links</h2>
+            <form id="professionalLinksForm">
+                <div class="profile-section">
+                    <div class="form-group">
+                        <label>LinkedIn Profile:</label>
+                        <input type="url" id="linkedinUrl" placeholder="https://linkedin.com/in/your-profile">
+                    </div>
+                    <div class="form-group">
+                        <label>GitHub Profile:</label>
+                        <input type="url" id="githubUrl" placeholder="https://github.com/your-username">
+                    </div>
+                    <div class="form-group">
+                        <label>Portfolio Website:</label>
+                        <input type="url" id="portfolioUrl" placeholder="https://your-portfolio.com">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">Update Links</button>
+            </form>
+        </div>
+
+        <!-- Resume Section -->
+        <div id="resumeSection" class="hidden">
+            <h2>Resume</h2>
+            <div class="profile-section">
+                <div class="form-group">
+                    <label>Upload Resume (PDF format recommended):</label>
+                    <input type="file" id="resumeFile" accept=".pdf,.doc,.docx">
+                </div>
+                <div id="currentResume" class="hidden">
+                    <p><strong>Current Resume:</strong> <span id="resumeFileName"></span></p>
+                    <p><strong>Uploaded:</strong> <span id="resumeUploadDate"></span></p>
+                </div>
+                
+                <button type="button" class="btn" onclick="uploadResume()">Upload Resume</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>

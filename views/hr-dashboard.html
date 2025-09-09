@@ -4,6 +4,199 @@
     <title>HR Dashboard</title>
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="/scripts/hr_dashboard.js" defer></script>
+    <style>
+        .profile-section {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #6f42c1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .search-filters {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .student-card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .student-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .student-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .student-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        
+        .info-section h4 {
+            margin: 0 0 10px 0;
+            color: #6f42c1;
+        }
+        
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .skill-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .btn {
+            background: #6f42c1;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #5a356b;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .btn-clear {
+            background: #dc3545;
+        }
+        
+        .btn-clear:hover {
+            background: #c82333;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background: #f8f9fa;
+        }
+        
+        .pagination button:disabled {
+            background: #f8f9fa;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .pagination .current-page {
+            background: #6f42c1;
+            color: white;
+            border-color: #6f42c1;
+        }
+        
+        .results-info {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .readonly {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -12,19 +205,163 @@
     </div>
     
     <div class="nav">
-        <button onclick="loadStudents()">View All Students</button>
-        <button onclick="loadStatistics()">Statistics</button>
+        <button onclick="showProfile()">My Profile</button>
+        <button onclick="showStudentSearch()">Search Students</button>
+        <button onclick="showStatistics()">Statistics</button>
         <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
     
     <div id="content" class="content">
-        <h2>HR Management Portal</h2>
-        <p>Use the navigation buttons above to:</p>
-        <ul>
-            <li>View and manage all registered students</li>
-            <li>View system statistics</li>
-            <li>Monitor user registrations</li>
-        </ul>
+        <!-- Welcome Section -->
+        <div id="welcomeSection">
+            <h2>HR Management Portal</h2>
+            <p>Use the navigation buttons above to:</p>
+            <ul>
+                <li>Manage your HR profile</li>
+                <li>Search and filter students with advanced criteria</li>
+                <li>View detailed student profiles</li>
+                <li>Access system statistics and insights</li>
+            </ul>
+        </div>
+
+        <!-- HR Profile Section -->
+        <div id="profileSection" class="hidden">
+            <h2>HR Profile</h2>
+            <form id="profileForm">
+                <div class="profile-section">
+                    <div class="filter-grid">
+                        <div class="form-group">
+                            <label>Full Name:</label>
+                            <input type="text" id="profileName" readonly class="readonly">
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="profileEmail" readonly class="readonly">
+                        </div>
+                        <div class="form-group">
+                            <label>Company Name:</label>
+                            <input type="text" id="profileCompany" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Job Title:</label>
+                            <input type="text" id="profileJobTitle" placeholder="HR Manager">
+                        </div>
+                        <div class="form-group">
+                            <label>Department:</label>
+                            <input type="text" id="profileDepartment" placeholder="Human Resources">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn">Update Profile</button>
+            </form>
+        </div>
+
+        <!-- Student Search Section -->
+        <div id="searchSection" class="hidden">
+            <div class="search-header">
+                <h2>Student Search & Filter</h2>
+                <button class="btn btn-clear" onclick="clearAllFilters()">Clear All Filters</button>
+            </div>
+            
+            <!-- Search Filters -->
+            <div class="search-filters">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label>Search by Name/Email:</label>
+                        <input type="text" id="searchTerm" placeholder="Enter name or email">
+                    </div>
+                    <div class="form-group">
+                        <label>Skills (comma separated):</label>
+                        <input type="text" id="skillsFilter" placeholder="JavaScript, Python, React">
+                    </div>
+                    <div class="form-group">
+                        <label>Location:</label>
+                        <input type="text" id="locationFilter" placeholder="City, State, or Country">
+                    </div>
+                    <div class="form-group">
+                        <label>Degree:</label>
+                        <select id="degreeFilter">
+                            <option value="">All Degrees</option>
+                            <option value="Bachelor's">Bachelor's</option>
+                            <option value="Master's">Master's</option>
+                            <option value="PhD">PhD</option>
+                            <option value="Associate">Associate</option>
+                            <option value="Diploma">Diploma</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Field of Study:</label>
+                        <input type="text" id="fieldOfStudyFilter" placeholder="Computer Science, Engineering">
+                    </div>
+                    <div class="form-group">
+                        <label>Graduation Year:</label>
+                        <input type="number" id="graduationYearFilter" min="1950" max="2035" placeholder="2024">
+                    </div>
+                    <div class="form-group">
+                        <label>Availability:</label>
+                        <select id="availabilityFilter">
+                            <option value="">All</option>
+                            <option value="immediate">Available Immediately</option>
+                            <option value="2-weeks">Available in 2 weeks</option>
+                            <option value="1-month">Available in 1 month</option>
+                            <option value="2-months">Available in 2 months</option>
+                            <option value="not-available">Not Available</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Experience Range (years):</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="number" id="expMinFilter" min="0" placeholder="Min" style="width: 48%;">
+                            <input type="number" id="expMaxFilter" min="0" placeholder="Max" style="width: 48%;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>GPA Range (0-4.0):</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="number" id="gpaMinFilter" min="0" max="4" step="0.1" placeholder="Min" style="width: 48%;">
+                            <input type="number" id="gpaMaxFilter" min="0" max="4" step="0.1" placeholder="Max" style="width: 48%;">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="searchStudents()">Search Students</button>
+                <button class="btn btn-secondary" onclick="exportResults()">Export Results</button>
+            </div>
+            
+            <!-- Search Results -->
+            <div id="searchResults">
+                <div id="resultsInfo" class="results-info hidden">
+                    <!-- Results summary will be displayed here -->
+                </div>
+                
+                <div id="studentsList">
+                    <!-- Student cards will be displayed here -->
+                </div>
+                
+                <div id="pagination" class="pagination hidden">
+                    <!-- Pagination controls will be displayed here -->
+                </div>
+                
+                <div id="noResults" class="no-results hidden">
+                    <h3>No students found</h3>
+                    <p>Try adjusting your search criteria or clearing some filters.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div id="statisticsSection" class="hidden">
+            <h2>System Statistics</h2>
+            <div id="statisticsContent">
+                <!-- Statistics will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Detail Modal (would be a popup in a real implementation) -->
+    <div id="studentModal" class="hidden">
+        <!-- Detailed student information would be displayed here -->
     </div>
 </body>
 </html>

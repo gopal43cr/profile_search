@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
-const User = require('../models/User');
+const Student = require('../models/Student');
+const HR = require('../models/HR');
 
 const router = express.Router();
 
@@ -20,35 +21,58 @@ router.get('/login', (req, res) => {
 // Handle signup
 router.post('/signup', async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, role, companyName } = req.body;
         
         // Validate input
         if (!name || !email || !password || !role) {
             return res.status(400).json({
                 success: false,
-                message: 'All fields are required'
+                message: 'Name, email, password, and role are required'
+            });
+        }
+
+        // Validate company name for HR role
+        if (role === 'hr' && !companyName) {
+            return res.status(400).json({
+                success: false,
+                message: 'Company name is required for HR role'
             });
         }
         
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        // Check if user already exists in both collections
+        const existingStudent = await Student.findOne({ email });
+        const existingHR = await HR.findOne({ email });
+        
+        if (existingStudent || existingHR) {
             return res.status(400).json({
                 success: false,
                 message: 'User with this email already exists'
             });
         }
         
-        // Create new user
-        const user = new User({ name, email, password, role });
-        await user.save();
+        let user;
+        
+        // Create user based on role
+        if (role === 'student') {
+            user = new Student({ name, email, password });
+            await user.save();
+        } else if (role === 'hr') {
+            user = new HR({ name, email, password, companyName });
+            await user.save();
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid role specified'
+            });
+        }
         
         // Store user in session (without password)
         req.session.user = {
             id: user._id,
             name: user.name,
             email: user.email,
-            role: user.role
+            role: user.role,
+            ...(role === 'hr' && { companyName: user.companyName })
         };
         
         // Return success response
@@ -87,8 +111,15 @@ router.post('/login', async (req, res) => {
             });
         }
         
-        // Find user by email
-        const user = await User.findOne({ email });
+        // Find user in both collections
+        let user = await Student.findOne({ email });
+        let userType = 'student';
+        
+        if (!user) {
+            user = await HR.findOne({ email });
+            userType = 'hr';
+        }
+        
         if (!user) {
             return res.status(400).json({
                 success: false,
@@ -105,12 +136,18 @@ router.post('/login', async (req, res) => {
             });
         }
         
+        // Update last login for HR users
+        if (userType === 'hr') {
+            await user.updateLastLogin();
+        }
+        
         // Store user in session (without password)
         req.session.user = {
             id: user._id,
             name: user.name,
             email: user.email,
-            role: user.role
+            role: user.role,
+            ...(userType === 'hr' && { companyName: user.companyName })
         };
         
         // Return success response
