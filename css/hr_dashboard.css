@@ -498,3 +498,294 @@ textarea {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* for card of every searched student */
+
+/* Horizontal Student Profile Card Styles */
+.student-profile-card.horizontal {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    margin: 12px 0;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.student-profile-card.horizontal:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    border-color: #667eea;
+}
+
+.student-header-horizontal {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    min-height: 80px;
+}
+
+.student-header-horizontal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.student-main-info {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.student-main-info h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    line-height: 1.2;
+}
+
+.student-subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: 400;
+}
+
+.availability-container {
+    position: relative;
+    z-index: 2;
+}
+
+.availability-badge {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    font-size: 11px !important;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    white-space: nowrap;
+}
+
+.student-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 2fr;
+    gap: 20px;
+    padding: 20px 25px;
+    background: #fafbfc;
+}
+
+.detail-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skills-column {
+    grid-column: span 1;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.detail-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 13px;
+    color: #1e293b;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.skills-horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.skill-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.more-skills {
+    background: #94a3b8 !important;
+}
+
+.student-actions {
+    padding: 15px 25px;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-small {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.btn-small:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-small.btn-secondary {
+    background: transparent;
+    color: #667eea;
+    border: 1px solid #667eea;
+}
+
+.btn-small.btn-secondary:hover {
+    background: #667eea;
+    color: white;
+}
+
+.btn-small.btn-linkedin {
+    background: #0077b5;
+}
+
+.btn-small.btn-linkedin:hover {
+    background: #005885;
+    box-shadow: 0 6px 15px rgba(0, 119, 181, 0.4);
+}
+
+/* Students list container for horizontal cards */
+#studentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .student-details-grid {
+        grid-template-columns: 1fr 1fr 2fr;
+        gap: 15px;
+    }
+    
+    .skills-column {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 900px) {
+    .student-details-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .skills-column {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 600px) {
+    .student-profile-card.horizontal {
+        margin: 8px 0;
+        border-radius: 12px;
+    }
+
+    .student-header-horizontal {
+        padding: 15px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        min-height: auto;
+    }
+
+    .student-main-info h3 {
+        font-size: 20px;
+    }
+
+    .student-details-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 15px 20px;
+    }
+
+    .skills-column {
+        grid-column: span 1;
+    }
+
+    .student-actions {
+        padding: 12px 20px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .btn-small {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+
+    #studentsList {
+        padding: 10px;
+    }
+}
+
+/* Loading and empty states */
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+}
+
+/* Hover effects for better UX */
+.detail-item:hover .detail-value {
+    color: #667eea;
+    transition: color 0.2s ease;
+}
+
+/* Accessibility improvements */
+.btn-small:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+.student-profile-card.horizontal:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}

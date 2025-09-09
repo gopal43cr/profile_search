@@ -66,18 +66,6 @@ body {
     position: relative;
 }
 
-#formTitle::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 3px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    border-radius: 2px;
-}
-
 .message {
     padding: 12px 16px;
     border-radius: 12px;

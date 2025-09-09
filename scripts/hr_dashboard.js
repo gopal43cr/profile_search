@@ -186,10 +186,10 @@ function displaySearchResults(data) {
 
 function createStudentCard(student) {
     const card = document.createElement('div');
-    card.className = 'student-card';
+    card.className = 'student-profile-card horizontal';
     
     const skills = student.skills && student.skills.length > 0 
-        ? student.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')
+        ? student.skills.slice(0, 4).map(skill => `<span class="skill-tag">${skill}</span>`).join('')
         : '<span class="skill-tag">No skills listed</span>';
     
     const location = student.location 
@@ -199,72 +199,84 @@ function createStudentCard(student) {
     
     const education = student.education;
     const educationText = education && education.degree
-        ? `${education.degree} in ${education.fieldOfStudy || 'N/A'} from ${education.university || 'N/A'}`
+        ? `${education.degree} in ${education.fieldOfStudy || 'N/A'}`
         : 'Education details not provided';
     
     const experience = student.experience;
     const experienceText = experience && experience.yearsOfExperience !== undefined
-        ? `${experience.yearsOfExperience} years of experience`
-        : 'Experience not specified';
+        ? `${experience.yearsOfExperience} years experience`
+        : 'No experience';
     
-    const gpa = education && education.gpa ? education.gpa.toFixed(2) : 'N/A';
+    const gpa = education && education.gpa ? education.gpa.toFixed(1) : 'N/A';
     const graduationYear = education && education.graduationYear ? education.graduationYear : 'N/A';
     
     card.innerHTML = `
-        <div class="student-header">
-            <h3>${student.name}</h3>
-            <span class="availability-badge" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
-                ${getAvailabilityText(student.availability)}
-            </span>
+        <div class="student-header-horizontal">
+            <div class="student-main-info">
+                <h3>${student.name}</h3>
+                <p class="student-subtitle">${educationText}</p>
+            </div>
+            <div class="availability-container">
+                <span class="availability-badge">
+                    ${getAvailabilityText(student.availability)}
+                </span>
+            </div>
         </div>
         
-        <div class="student-info">
-            <div class="info-section">
-                <h4>Contact Information</h4>
-                <p><strong>Email:</strong> ${student.email}</p>
-                <p><strong>Location:</strong> ${location}</p>
-                <p><strong>Student ID:</strong> ${student._id}</p>
-            </div>
-            
-            <div class="info-section">
-                <h4>Education</h4>
-                <p>${educationText}</p>
-                <p><strong>GPA:</strong> ${gpa}/10.0</p>
-                <p><strong>Graduation Year:</strong> ${graduationYear}</p>
-            </div>
-            
-            <div class="info-section">
-                <h4>Experience</h4>
-                <p>${experienceText}</p>
-                ${experience && experience.jobTitle ? `<p><strong>Latest Role:</strong> ${experience.jobTitle}</p>` : ''}
-                ${experience && experience.company ? `<p><strong>Company:</strong> ${experience.company}</p>` : ''}
-            </div>
-            
-            <div class="info-section">
-                <h4>Skills</h4>
-                <div class="skills-list">
-                    ${skills}
+        <div class="student-details-grid">
+            <div class="detail-column">
+                <div class="detail-item">
+                    <span class="detail-label">📧 Email:</span>
+                    <span class="detail-value">${student.email}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📍 Location:</span>
+                    <span class="detail-value">${location}</span>
                 </div>
             </div>
-
-            <div class="info-section">
-                <h3>Resume</h3>
-                <button type="button" class="btn" onclick="viewResume('${student._id}')">View</button>
+            
+            <div class="detail-column">
+                <div class="detail-item">
+                    <span class="detail-label">🎓 GPA:</span>
+                    <span class="detail-value">${gpa}/10.0</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📅 Graduation:</span>
+                    <span class="detail-value">${graduationYear}</span>
+                </div>
             </div>
             
-            ${student.professionalLinks && (student.professionalLinks.linkedin || student.professionalLinks.github || student.professionalLinks.portfolio) ? `
-            <div class="info-section">
-                <h4>Professional Links</h4>
-                ${student.professionalLinks.linkedin ? `<p><a href="${student.professionalLinks.linkedin}" target="_blank">LinkedIn Profile</a></p>` : ''}
-                ${student.professionalLinks.github ? `<p><a href="${student.professionalLinks.github}" target="_blank">GitHub Profile</a></p>` : ''}
-                ${student.professionalLinks.portfolio ? `<p><a href="${student.professionalLinks.portfolio}" target="_blank">Portfolio Website</a></p>` : ''}
+            <div class="detail-column">
+                <div class="detail-item">
+                    <span class="detail-label">💼 Experience:</span>
+                    <span class="detail-value">${experienceText}</span>
+                </div>
+                ${experience && experience.company ? `
+                <div class="detail-item">
+                    <span class="detail-label">🏢 Company:</span>
+                    <span class="detail-value">${experience.company}</span>
+                </div>
+                ` : ''}
             </div>
-            ` : ''}
+            
+            <div class="detail-column skills-column">
+                <div class="detail-item">
+                    <span class="detail-label">🔧 Skills:</span>
+                    <div class="skills-horizontal">
+                        ${skills}
+                        ${student.skills && student.skills.length > 4 ? `<span class="skill-tag more-skills">+${student.skills.length - 4} more</span>` : ''}
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div style="margin-top: 15px;">
-            <button class="btn" onclick="viewStudentDetails('${student._id}')">View Full Profile</button>
-            <button class="btn btn-secondary" onclick="contactStudent('${student.email}')">Contact Student</button>
+        <div class="student-actions">
+            <button class="btn btn-small" onclick="viewResume('${student._id}')">📄 Resume</button>
+            <button class="btn btn-small" onclick="viewStudentDetails('${student._id}')">👤 Profile</button>
+            <button class="btn btn-small btn-secondary" onclick="contactStudent('${student.email}')">✉️ Contact</button>
+            ${student.professionalLinks && student.professionalLinks.linkedin ? `
+            <a href="${student.professionalLinks.linkedin}" target="_blank" class="btn btn-small btn-linkedin">💼 LinkedIn</a>
+            ` : ''}
         </div>
     `;
     
