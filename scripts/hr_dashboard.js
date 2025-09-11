@@ -98,7 +98,7 @@ async function updateHRProfile() {
         const data = await response.json();
         
         if (data.success) {
-            alert('Profile updated successfully!');
+            showSuccess('Profile updated successfully!');
             hrProfile = data.profile;
             // Update welcome message if company name changed
             if (updateData.companyName) {
@@ -106,11 +106,11 @@ async function updateHRProfile() {
                     `Welcome, ${hrProfile.name} from ${updateData.companyName}!`;
             }
         } else {
-            alert('Error: ' + data.message);
+            showError('Error: ' + data.message);
         }
     } catch (error) {
         console.error('Error updating HR profile:', error);
-        alert('Network error. Please try again.');
+        showError('Network error. Please try again.');
     }
 }
 
@@ -277,6 +277,12 @@ function createStudentCard(student) {
             ${student.professionalLinks && student.professionalLinks.linkedin ? `
             <a href="${student.professionalLinks.linkedin}" target="_blank" class="btn btn-small btn-linkedin">💼 LinkedIn</a>
             ` : ''}
+            ${student.professionalLinks && student.professionalLinks.github ? `
+                <a href="${student.professionalLinks.github}" target="_blank" class="btn btn-small btn-linkedin">💻 Github</a>
+                ` : ''}
+            ${student.professionalLinks && student.professionalLinks.portfolio ? `
+                <a href="${student.professionalLinks.portfolio}" target="_blank" class="btn btn-small btn-linkedin">🌐 Portfolio</a>
+                ` : ''}
         </div>
     `;
     
@@ -360,19 +366,135 @@ function clearAllFilters() {
 async function viewStudentDetails(studentId) {
     try {
         const response = await fetch(`/hr/students/${studentId}`);
-        const data = await response.json();
+        const data = await response.json(); 
         
-        if (data.success) {
-            // In a real implementation, this would open a modal or new page
-            alert(`Full profile for ${data.student.name}:\n\n` + JSON.stringify(data.student, null, 2));
+        if (data.success && data.student) {
+            const student = data.student;
+            
+            // Get location string safely
+            const location = student.location 
+                ? [student.location.city, student.location.state, student.location.country]
+                    .filter(Boolean).join(', ') || 'Location not specified'
+                : 'Location not specified';
+            
+            // Get education info safely
+            const education = student.education || {};
+            const educationText = education.degree
+                ? `${education.degree} in ${education.fieldOfStudy || 'N/A'}`
+                : 'Education details not provided';
+            
+            // Get experience info safely
+            const experience = student.experience || {};
+            const experienceText = experience.yearsOfExperience !== undefined
+                ? `${experience.yearsOfExperience} years experience`
+                : 'No experience listed';
+            
+            // Get skills safely
+            const skills = student.skills && student.skills.length > 0
+                ? student.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')
+                : '<span class="skill-tag">No skills listed</span>';
+            
+            // Create comprehensive modal content
+            const studentModal = document.getElementById('studentModal');
+            studentModal.innerHTML = `
+                <div class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>${student.name}</h2>
+                            <button class="modal-close" onclick="closeStudentModal()">&times;</button>
+                        </div>
+                        
+                        <div class="modal-body">
+                            <div class="student-detail-section">
+                                <h3>Contact Information</h3>
+                                <p><strong>Email:</strong> ${student.email}</p>
+                                <p><strong>Location:</strong> ${location}</p>
+                                <p><strong>Availability:</strong> ${getAvailabilityText(student.availability)}</p>
+                            </div>
+                            
+                            <div class="student-detail-section">
+                                <h3>Education</h3>
+                                <p><strong>Degree:</strong> ${educationText}</p>
+                                ${education.university ? `<p><strong>University:</strong> ${education.university}</p>` : ''}
+                                ${education.graduationYear ? `<p><strong>Graduation Year:</strong> ${education.graduationYear}</p>` : ''}
+                                ${education.gpa ? `<p><strong>GPA:</strong> ${education.gpa}/10.0</p>` : ''}
+                            </div>
+                            
+                            <div class="student-detail-section">
+                                <h3>Experience</h3>
+                                <p><strong>Experience:</strong> ${experienceText}</p>
+                                ${experience.company ? `<p><strong>Company:</strong> ${experience.company}</p>` : ''}
+                                ${experience.role ? `<p><strong>Role:</strong> ${experience.role}</p>` : ''}
+                            </div>
+                            
+                            <div class="student-detail-section">
+                                <h3>Skills</h3>
+                                <div class="skills-container">
+                                    ${skills}
+                                </div>
+                            </div>
+                            
+                            ${student.professionalLinks ? `
+                            <div class="student-detail-section">
+                                <h3>Professional Links</h3>
+                                <div class="professional-links">
+                                    ${student.professionalLinks.linkedin ? `
+                                        <a href="${student.professionalLinks.linkedin}" target="_blank" class="btn btn-small btn-linkedin">LinkedIn</a>
+                                    ` : ''}
+                                    ${student.professionalLinks.github ? `
+                                        <a href="${student.professionalLinks.github}" target="_blank" class="btn btn-small btn-linkedin">GitHub</a>
+                                    ` : ''}
+                                    ${student.professionalLinks.portfolio ? `
+                                        <a href="${student.professionalLinks.portfolio}" target="_blank" class="btn btn-small btn-linkedin">Portfolio</a>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="closeStudentModal()">Close</button>
+                            <button class="btn" onclick="contactStudent('${student.email}')">Contact Student</button>
+                            <button class="btn" onclick="viewResume('${student._id}')">View Resume</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            studentModal.classList.remove('hidden');
+            document.body.classList.add('modal-open'); // Prevent background scrolling
         } else {
-            alert('Error loading student details');
+            showError('Error: ' + (data.message || 'Failed to load student details'));
         }
     } catch (error) {
         console.error('Error loading student details:', error);
-        alert('Error loading student details');
+        showError('Network error while loading student details. Please try again.');
     }
 }
+
+// Function to close the modal
+function closeStudentModal() {
+    const studentModal = document.getElementById('studentModal');
+    studentModal.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+}
+
+// Close modal when clicking outside of it
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal-overlay')) {
+        closeStudentModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const studentModal = document.getElementById('studentModal');
+        if (!studentModal.classList.contains('hidden')) {
+            closeStudentModal();
+        }
+    }
+});
 
 function contactStudent(email) {
     // Open email client with pre-filled recipient
@@ -461,12 +583,12 @@ function displayStatistics(stats) {
 
 function exportResults() {
     if (!document.getElementById('studentsList').innerHTML) {
-        alert('No search results to export. Please perform a search first.');
+        showError('No search results to export. Please perform a search first.');
         return;
     }
     
     // In a real implementation, this would generate and download a CSV/Excel file
-    alert('Export functionality would generate a CSV/Excel file with the current search results including all student details and contact information.');
+    showInfo('Export functionality would generate a CSV/Excel file with the current search results including all student details and contact information.');
 }
 
 async function logout() {
@@ -495,6 +617,71 @@ async function viewResume(studentId) {
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
     } else {
-        alert('Error fetching resume.');
+        showError('Error fetching resume.');
     }
+}
+
+// Enhanced showMessage function with auto-dismiss
+function showMessage(message, type = 'success', duration = 3000) {
+    const alertContainer = document.getElementById('alertContainer') || createAlertContainer();
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.style.setProperty('--timeout-duration', `${duration}ms`);
+    
+    messageDiv.innerHTML = `
+        ${message}
+        <button class="close-btn" onclick="hideMessage(this.parentElement)">&times;</button>
+    `;
+    
+    alertContainer.appendChild(messageDiv);
+    
+    setTimeout(() => messageDiv.classList.add('show'), 10);
+    
+    const timeoutId = setTimeout(() => hideMessage(messageDiv), duration);
+    messageDiv.timeoutId = timeoutId;
+    
+    return messageDiv;
+}
+
+function hideMessage(messageElement) {
+    if (!messageElement) return;
+    
+    if (messageElement.timeoutId) {
+        clearTimeout(messageElement.timeoutId);
+    }
+    
+    messageElement.classList.add('hide');
+    messageElement.classList.remove('show');
+    
+    setTimeout(() => {
+        if (messageElement.parentNode) {
+            messageElement.parentNode.removeChild(messageElement);
+        }
+    }, 400);
+}
+
+function createAlertContainer() {
+    const container = document.createElement('div');
+    container.id = 'alertContainer';
+    container.className = 'alert-container';
+    document.body.appendChild(container);
+    return container;
+}
+
+// Utility functions
+function showSuccess(message, duration = 3000) {
+    return showMessage(message, 'success', duration);
+}
+
+function showError(message, duration = 4000) {
+    return showMessage(message, 'error', duration);
+}
+
+function showWarning(message, duration = 3500) {
+    return showMessage(message, 'warning', duration);
+}
+
+function showInfo(message, duration = 3000) {
+    return showMessage(message, 'info', duration);
 }

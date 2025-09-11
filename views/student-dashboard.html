@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>Student Dashboard</title>
-    <link rel="stylesheet" href="/css/student_dashboard.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/pages.css">
     <script src="/scripts/student_dashboard.js" defer></script>
 </head>
 <body>
@@ -10,6 +11,7 @@
         <h1>Student Dashboard</h1>
         <p id="welcomeMessage">Welcome back!</p>
     </div>
+    
     
     <div class="nav">
         <button onclick="showProfile()">Profile Overview</button>
@@ -22,6 +24,9 @@
     </div>
     
     <div id="content" class="content">
+        <!-- Alert Container -->
+        <div id="alertContainer" class="alert-container"></div>
+        <div id="message" class="message hidden"></div>
         <!-- Profile Completion Status -->
         <div id="completionStatus" class="completion-status">
             <span id="completionText">Loading profile completion status...</span>

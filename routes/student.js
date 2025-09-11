@@ -265,7 +265,7 @@ router.post('/upload_resume/:id', upload.single('resume'), async (req, res) => {
         };
 
         await student.save();
-        res.json({ message: 'Resume uploaded successfully', student });
+        res.json({ success: true, message: 'Resume uploaded successfully', student });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>HR Dashboard</title>
-    <link rel="stylesheet" href="/css/hr_dashboard.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/pages.css">
     <script src="/scripts/hr_dashboard.js" defer></script>
 </head>
 <body>
@@ -19,6 +20,9 @@
     </div>
     
     <div id="content" class="content">
+        <!-- Alert Container -->
+        <div id="alertContainer" class="alert-container"></div>
+        <div id="message" class="message hidden"></div>
         <!-- Welcome Section -->
         <div id="welcomeSection">
             <h2>HR Management Portal</h2>
@@ -168,7 +172,6 @@
 
     <!-- Student Detail Modal (would be a popup in a real implementation) -->
     <div id="studentModal" class="hidden">
-        <!-- Detailed student information would be displayed here -->
     </div>
 </body>
 </html>

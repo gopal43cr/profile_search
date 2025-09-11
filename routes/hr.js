@@ -44,9 +44,9 @@ router.put('/profile', requireRole('hr'), async (req, res) => {
         const updateData = req.body;
 
         // Remove fields that shouldn't be updated via this route
-        delete updateData.password;
-        delete updateData.email;
-        delete updateData.role;
+        // delete updateData.password;
+        // delete updateData.email;
+        // delete updateData.role;
         delete updateData.createdAt;
 
         const hr = await HR.findByIdAndUpdate(

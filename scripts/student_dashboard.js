@@ -164,6 +164,71 @@ function showResume() {
     document.getElementById('resumeSection').classList.remove('hidden'); 
 }
 
+// Enhanced showMessage function with auto-dismiss
+function showMessage(message, type = 'success', duration = 3000) {
+    const alertContainer = document.getElementById('alertContainer') || createAlertContainer();
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.style.setProperty('--timeout-duration', `${duration}ms`);
+    
+    messageDiv.innerHTML = `
+        ${message}
+        <button class="close-btn" onclick="hideMessage(this.parentElement)">&times;</button>
+    `;
+    
+    alertContainer.appendChild(messageDiv);
+    
+    setTimeout(() => messageDiv.classList.add('show'), 10);
+    
+    const timeoutId = setTimeout(() => hideMessage(messageDiv), duration);
+    messageDiv.timeoutId = timeoutId;
+    
+    return messageDiv;
+}
+
+function hideMessage(messageElement) {
+    if (!messageElement) return;
+    
+    if (messageElement.timeoutId) {
+        clearTimeout(messageElement.timeoutId);
+    }
+    
+    messageElement.classList.add('hide');
+    messageElement.classList.remove('show');
+    
+    setTimeout(() => {
+        if (messageElement.parentNode) {
+            messageElement.parentNode.removeChild(messageElement);
+        }
+    }, 400);
+}
+
+function createAlertContainer() {
+    const container = document.createElement('div');
+    container.id = 'alertContainer';
+    container.className = 'alert-container';
+    document.body.appendChild(container);
+    return container;
+}
+
+// Utility functions
+function showSuccess(message, duration = 3000) {
+    return showMessage(message, 'success', duration);
+}
+
+function showError(message, duration = 4000) {
+    return showMessage(message, 'error', duration);
+}
+
+function showWarning(message, duration = 3500) {
+    return showMessage(message, 'warning', duration);
+}
+
+function showInfo(message, duration = 3000) {
+    return showMessage(message, 'info', duration);
+}
+
 function updateSkillsDisplay() {
     const skillsList = document.getElementById('skillsList');
     if (!skillsList) return;
@@ -271,15 +336,15 @@ async function updateProfileSection() {
         const data = await response.json();
         
         if (data.success) {
-            alert('Profile updated successfully!');
+            showSuccess('Profile updated successfully!');
             studentProfile = data.profile;
             updateCompletionStatus();
         } else {
-            alert('Error: ' + data.message);
+            showError('Error: ' + data.message, true);
         }
     } catch (error) {
         console.error('Error updating profile:', error);
-        alert('Network error. Please try again.');
+        showError('Network error. Please try again.', true);
     }
 }
 
@@ -304,15 +369,15 @@ async function updateEducation() {
         const data = await response.json();
         
         if (data.success) {
-            alert('Education details updated successfully!');
+            showSuccess('Education details updated successfully!');
             studentProfile.education = data.education;
             updateCompletionStatus();
         } else {
-            alert('Error: ' + data.message);
+            showError('Error: ' + data.message, true);
         }
     } catch (error) {
         console.error('Error updating education:', error);
-        alert('Network error. Please try again.');
+        showError('Network error. Please try again.', true);
     }
 }
 
@@ -329,15 +394,15 @@ async function updateSkills() {
         const data = await response.json();
         
         if (data.success) {
-            alert('Skills updated successfully!');
+            showSuccess('Skills updated successfully!');
             studentProfile.skills = data.skills;
             updateCompletionStatus();
         } else {
-            alert('Error: ' + data.message);
+            showError('Error: ' + data.message);
         }
     } catch (error) {
         console.error('Error updating skills:', error);
-        alert('Network error. Please try again.');
+        showError('Network error. Please try again.', true);
     }
 }
 
@@ -363,15 +428,15 @@ async function updateExperience() {
         const data = await response.json();
         
         if (data.success) {
-            alert('Experience updated successfully!');
+            showSuccess('Experience updated successfully!');
             studentProfile = data.profile;
             updateCompletionStatus();
         } else {
-            alert('Error: ' + data.message);
+            showError('Error: ' + data.message, true);
         }
     } catch (error) {
         console.error('Error updating experience:', error);
-        alert('Network error. Please try again.');
+        showError('Network error. Please try again.', true);
     }
 }
 
@@ -396,15 +461,15 @@ async function updateProfessionalLinks() {
         const data = await response.json();
         
         if (data.success) {
-            alert('Professional links updated successfully!');
+            showSuccess('Professional links updated successfully!');
             studentProfile = data.profile;
             updateCompletionStatus();
         } else {
-            alert('Error: ' + data.message);
+            showError('Error: ' + data.message, true);
         }
     } catch (error) {
         console.error('Error updating professional links:', error);
-        alert('Network error. Please try again.');
+        showError('Network error. Please try again.', true);
     }
 }
 
@@ -412,7 +477,7 @@ async function updateProfessionalLinks() {
 async function uploadResume() {
     const resumeInput = document.getElementById('resumeFile');
     if (resumeInput.files.length === 0) {
-        alert('Please select a file to upload.');
+        showWarning('Please select a file to upload.');
         return;
     }
     const file = resumeInput.files[0];
@@ -427,23 +492,23 @@ async function uploadResume() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Resume uploaded successfully!');
+            showSuccess('Resume uploaded successfully!');
             studentProfile.resume = data.student.resume;
             populateProfileForm();
             updateCompletionStatus();
         } else {
-            alert('Error: ' + data.message);
+            showError('Error: ' + data.message, true);
         }
     })
     .catch(error => {
         console.error('Error uploading resume:', error);
-        alert('Network error. Please try again.');
+        showError('Network error. Please try again.', true);
     });
 }
 
 async function viewResume() {
     if (!studentProfile.resume || !studentProfile.resume.fileData) {
-        alert('No resume uploaded.');
+        showWarning('No resume uploaded.');
         return;
     }
     const response = await fetch(`/student/resume/${studentProfile._id}`);
@@ -452,7 +517,7 @@ async function viewResume() {
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
     } else {
-        alert('Error fetching resume.');
+        showError('Error fetching resume.', true);
     }
 }
 
